@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 //import { FormControl, FormGroup } from '@angular/forms';
 import { FormBuilder, Validators } from '@angular/forms';
+import { PasswordValidator } from './shared/password.validator';
+import { forbiddenNameValidador, forbiddenNameValidador1 } from './shared/user-name.validator';
 
 @Component({
   selector: 'app-root',
@@ -18,15 +20,16 @@ export class AppComponent {
 
   // Using Form Builder Service
     registrationForm = this.fb.group({
-      userName: ['', [Validators.required, Validators.minLength(3)]],
-      password: [''],
-      confirmPassword: [''],
+      userName: ['', [Validators.required, Validators.minLength(3), forbiddenNameValidador1, forbiddenNameValidador(/password/)]],
+      password: ['', Validators.required],
+      confirmPassword: ['', Validators.required],
       address: this.fb.group({
         city: [''],
         state: [''],
         postalCode: ['']
       })
-    });  
+      // Cross validation is passed in the Form Group
+    }, {validator: PasswordValidator});  
 
 //Using Form Grupo and Forming Control
   // registrationForm = new FormGroup({
