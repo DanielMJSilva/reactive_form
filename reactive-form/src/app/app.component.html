@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <h2>Registration Form</h2>
-  <form [formGroup]="registrationForm"> <!-- Binding formGroup with resgistrationForm-->
+  <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()"> <!-- Binding formGroup with resgistrationForm-->
     <div class="form-group">
       <label>Username</label> <!--using a getter that returns a form control (registrationForm.controls.userName == userName ) -->
       <input [class.is-invalid]="userName.invalid && 
@@ -20,6 +20,10 @@
       <label>Email</label>
       <input [class.is-invalid]="email.invalid && email.touched" formControlName="email" type="text" class="form-control">
       <small [class.d-none]="email.valid || email.untouched" class="text-danger">Email is required</small>
+      <div formArrayName="alternateEmails" *ngFor="let email of alternateEmails.controls; let i=index">
+        <input type="text" class="form-control my-1" [formControlName]="i">
+      </div>
+      <button (click)="addAlternateEmail()" type="button" class="btn btn-secondary btn-sm m-2" >Add E-mail</button>
     </div>
     <div class="form-check mb-3">
       <input class="form-check-input" formControlName="subscribe" type="checkbox" >
@@ -55,7 +59,7 @@
 
     </div>
 
-    <button class="btn btn-primary" type="submit">Register</button>
+    <button [disabled]="!registrationForm.valid" class="btn btn-primary" type="submit">Register</button>
     <button (click)="loadApiData()" class="btn btn-secondary ml-2" type="button">Load API data</button>
     <button (click)="loadApiDataPatch()" class="btn btn-warning ml-2" type="button">Load Some API data</button>
   </form>

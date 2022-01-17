@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 //import { FormControl, FormGroup } from '@angular/forms';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { PasswordValidator } from './shared/password.validator';
 import { forbiddenNameValidador, forbiddenNameValidador1 } from './shared/user-name.validator';
+import { RegistrationService } from './registration.service';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +23,16 @@ export class AppComponent implements OnInit{
     return this.registrationForm.controls.email;
   }
 
-  constructor(private fb: FormBuilder) {}
+  get alternateEmails(){
+    return this.registrationForm.controls.alternateEmails as FormArray;
+  }
+  //push forme control into form array
+  addAlternateEmail() {
+    this.alternateEmails.push(this.fb.control(''));
+  }
+
+  constructor(private fb: FormBuilder,
+    _registrationService: RegistrationService ) {}
 
   ngOnInit(): void {
         // Using Form Builder Service
@@ -36,7 +46,9 @@ export class AppComponent implements OnInit{
         city: [''],
         state: [''],
         postalCode: ['']
-      })
+      }),
+      // add email using dynamic form control
+      alternateEmails: this.fb.array([])
       // Cross validation is passed in the Form Group
     }, {validator: PasswordValidator});
 
@@ -97,5 +109,14 @@ export class AppComponent implements OnInit{
       password: '12345',
       confirmPassword: '12345'
     });
+}
+
+onSubmit(){
+  console.log(this.registrationForm.value);
+  this._registrationService.register(this.registrationForm.value)
+    .subscribe(
+      response => console.log('Success!', response),
+      error => console.error('Error', error)
+    );
 }
 }
