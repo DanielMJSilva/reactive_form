@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 //import { FormControl, FormGroup } from '@angular/forms';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PasswordValidator } from './shared/password.validator';
 import { forbiddenNameValidador, forbiddenNameValidador1 } from './shared/user-name.validator';
 
@@ -9,18 +9,27 @@ import { forbiddenNameValidador, forbiddenNameValidador1 } from './shared/user-n
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
+
+  registrationForm!: FormGroup;
 
   //using a getter that returns a form control
   get userName(){
     return this.registrationForm.controls.userName;
   }
 
+  get email(){
+    return this.registrationForm.controls.email;
+  }
+
   constructor(private fb: FormBuilder) {}
 
-  // Using Form Builder Service
-    registrationForm = this.fb.group({
+  ngOnInit(): void {
+        // Using Form Builder Service
+    this.registrationForm = this.fb.group({
       userName: ['', [Validators.required, Validators.minLength(3), forbiddenNameValidador1, forbiddenNameValidador(/password/)]],
+      email: [''],
+      subscribe: [false],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
       address: this.fb.group({
@@ -29,7 +38,27 @@ export class AppComponent {
         postalCode: ['']
       })
       // Cross validation is passed in the Form Group
-    }, {validator: PasswordValidator});  
+    }, {validator: PasswordValidator});
+
+
+    //add conditional validation
+    this.registrationForm.get('subscribe')?.valueChanges
+      .subscribe(checkedValue => {
+        const email = this.registrationForm.get('email');
+        if (checkedValue){
+          //add validator when checkbox is true
+          email?.setValidators(Validators.required);
+        } else {
+          //otherwise remove all validators
+          email?.clearValidators();
+        }
+        // restart validation of email
+        email?.updateValueAndValidity();
+      });
+
+  }
+
+
 
 //Using Form Grupo and Forming Control
   // registrationForm = new FormGroup({
@@ -48,6 +77,8 @@ export class AppComponent {
   loadApiData(){
     this.registrationForm.setValue({
       userName: 'Daniel Silva',
+      email: 'daniel@example.com',
+      subscribe: true,
       password: '12345',
       confirmPassword: '12345',
       address:{
