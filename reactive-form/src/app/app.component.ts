@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 //import { FormControl, FormGroup } from '@angular/forms';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -9,11 +9,16 @@ import { FormBuilder } from '@angular/forms';
 })
 export class AppComponent {
 
+  //using a getter that returns a form control
+  get userName(){
+    return this.registrationForm.controls.userName;
+  }
+
   constructor(private fb: FormBuilder) {}
 
   // Using Form Builder Service
     registrationForm = this.fb.group({
-      userName: [''],
+      userName: ['', [Validators.required, Validators.minLength(3)]],
       password: [''],
       confirmPassword: [''],
       address: this.fb.group({
