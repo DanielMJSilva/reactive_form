@@ -11,9 +11,10 @@ import { RegistrationService } from './registration.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
+  [x: string]: any;
 
   registrationForm!: FormGroup;
-
+  
   //using a getter that returns a form control
   get userName(){
     return this.registrationForm.controls.userName;
@@ -111,12 +112,12 @@ export class AppComponent implements OnInit{
     });
 }
 
-onSubmit(){
-  console.log(this.registrationForm.value);
-  this._registrationService.register(this.registrationForm.value)
-    .subscribe(
-      response => console.log('Success!', response),
-      error => console.error('Error', error)
-    );
-}
+  onSubmit(){
+    console.log(this.registrationForm.value);
+    this._registrationService.register(this.registrationForm.value)
+      .subscribe(
+        (response: any) => console.log('Success!', response),
+        (error: any) => console.error('Error', error)
+      );
+  }
 }
